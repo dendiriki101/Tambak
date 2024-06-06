@@ -3,21 +3,27 @@
 @section('title', 'Login')
 
 @section('content')
-<div class="col-md-4 form-container">
-    <h3 class="mb-3">Login ke Akun Anda</h3>
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-        <div class="form-group">
-            <label for="email">Alamat Email</label>
-            <input type="email" class="form-control" name="email" required autofocus>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">Login ke Akun Anda</div>
+                <div class="card-body">
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Alamat Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Kata Sandi</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <div class="form-group">
-            <label for="password">Kata Sandi</label>
-            <input type="password" class="form-control" name="password" required>
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-block">Login</button>
-    </form>
+    </div>
 </div>
 @endsection

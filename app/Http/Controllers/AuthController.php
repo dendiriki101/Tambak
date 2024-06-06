@@ -6,28 +6,35 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log; // Tambahkan ini
 
 class AuthController extends Controller
 {
+
     public function showLoginForm()
     {
-        return view('auth.login');
-    }
-
-    public function login(Request $request)
-    {
-        $credentials = $request->only('email', 'password');
-        if (Auth::attempt($credentials)) {
-            return redirect()->intended('dashboard');
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
         }
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ]);
+        return view('auth.login');
     }
 
     public function showRegistrationForm()
     {
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
         return view('auth.register');
+    }
+
+
+    public function login(Request $request)
+    {
+        if (Auth::attempt($request->only('email', 'password'))) {
+            Log::info('User logged in: ' . Auth::id());
+            return redirect()->intended('dashboard');
+        }
+        return back()->withErrors(['email' => 'The provided credentials do not match our records.']);
     }
 
     public function register(Request $request)
@@ -54,9 +61,9 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
-        $request->session()->invalidate();  // Invalidates the session
-        $request->session()->regenerateToken();  // Regenerates the CSRF token
-        return redirect('/');  // Redirect pengguna ke halaman awal
+        $request->session()->invalidate();  // Menghapus sesi
+        $request->session()->regenerateToken();  // Menghasilkan token CSRF baru
+        return redirect('login');  // Mengarahkan pengguna ke halaman awal
     }
 
 }
