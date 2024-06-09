@@ -41,4 +41,21 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // Di dalam model User
+    public function bookings()
+    {
+        return $this->belongsToMany(Booking::class, 'booking_user')
+                    ->withPivot('status')
+                    ->withTimestamps();
+    }
+
+
+    public function seller()
+    {
+        return $this->belongsTo(User::class, 'seller_id');
+    }
+
+
+
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -72,6 +73,12 @@ class ProductController extends Controller
 
         return redirect()->route('dashboard')->with('success', 'Product updated successfully.');
     }
+
+    public function show(Product $product)
+    {
+        return view('products.show', compact('product'));
+    }
+
 
 
     // Additional methods can be added here for listing, editing, etc.

@@ -15,4 +15,16 @@ class Product extends Model
     {
         return $this->belongsTo(User::class, 'seller_id');
     }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    public function activeBooking()
+    {
+        return $this->hasOne(Booking::class)->where('status', 'aktif');
+    }
+
+
 }
