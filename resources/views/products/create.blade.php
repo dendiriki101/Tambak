@@ -24,6 +24,17 @@
                             <input type="number" class="form-control" id="price" name="price" required step="0.01">
                         </div>
                         <div class="mb-3">
+                            <label for="jenis_ikan" class="form-label">Jenis Ikan</label>
+                            <select class="form-control" id="jenis_ikan" name="jenis_ikan" required>
+                                <option value="Udang">Udang</option>
+                                <option value="Kepiting">Kepiting</option>
+                                <option value="Ikan Laut">Ikan Laut</option>
+                                <option value="Ikan Sungai">Ikan Sungai</option>
+                                <option value="Kerang">Kerang</option>
+                                <option value="Kerapu">Kerapu</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label for="image" class="form-label">Gambar Produk</label>
                             <input type="file" class="form-control" id="image" name="image">
                         </div>

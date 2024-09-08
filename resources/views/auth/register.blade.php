@@ -1,12 +1,12 @@
-@extends('layouts.app')
+@extends('layouts.layoutlog')
 
 @section('title', 'Daftar')
 
 @section('content')
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
+<div class="container-fluid">
+    <div class="row justify-content-center" style="min-height: 100vh; align-items: center;">
+        <div class="col-md-6">
+            <div class="card" style="background-color: rgba(255, 255, 255, 0.8); border-radius: 10px;">
                 <div class="card-header">Daftar Akun Baru</div>
                 <div class="card-body">
                     <form method="POST" action="{{ route('register') }}">
@@ -18,6 +18,14 @@
                         <div class="mb-3">
                             <label for="email" class="form-label">Alamat Email</label>
                             <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="no_hp" class="form-label">No HP</label>
+                            <input type="text" class="form-control" id="no_hp" name="no_hp" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="no_ktp" class="form-label">No KTP</label>
+                            <input type="text" class="form-control" id="no_ktp" name="no_ktp" required>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Kata Sandi</label>

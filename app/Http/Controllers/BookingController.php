@@ -17,20 +17,113 @@ class BookingController extends Controller
 
     public function create()
     {
+        // Mendapatkan daftar produk yang dijual oleh user yang sedang login dan belum didaftarkan untuk lelang aktif
         $products = Product::where('seller_id', Auth::id())
                             ->whereDoesntHave('bookings', function ($query) {
                                 $query->where('status', 'aktif');
                             })->get();
 
-        return view('bookings.create', compact('products'));
+        // Daftar kota dan kecamatan di Jawa Timur (array statis)
+        $cities = [
+            'Surabaya' => [
+                'Sukolilo',
+                'Mulyorejo',
+                'Rungkut',
+                'Wonokromo',
+                'Tambaksari',
+                'Tegalsari'
+            ],
+            'Malang' => [
+                'Blimbing',
+                'Kedungkandang',
+                'Lowokwaru',
+                'Sukun',
+                'Klojen'
+            ],
+            'Sidoarjo' => [
+                'Waru',
+                'Taman',
+                'Krian',
+                'Buduran',
+                'Candi',
+                'Sedati'
+            ],
+            'Gresik' => [
+                'Kebomas',
+                'Driyorejo',
+                'Bungah',
+                'Manyar',
+                'Menganti',
+                'Benjeng'
+            ],
+            'Mojokerto' => [
+                'Prajurit Kulon',
+                'Magersari',
+                'Puri',
+                'Jatirejo',
+                'Jetis'
+            ],
+            'Pasuruan' => [
+                'Bangil',
+                'Beji',
+                'Gempol',
+                'Pandaan',
+                'Purwosari'
+            ],
+            'Probolinggo' => [
+                'Kraksaan',
+                'Paiton',
+                'Dringu',
+                'Krejengan',
+                'Tegalsiwalan'
+            ],
+            'Banyuwangi' => [
+                'Banyuwangi',
+                'Glagah',
+                'Giri',
+                'Kabat',
+                'Rogojampi'
+            ],
+            'Jember' => [
+                'Patrang',
+                'Sumbersari',
+                'Kaliwates',
+                'Ambulu',
+                'Balung'
+            ],
+            'Madiun' => [
+                'Kartoharjo',
+                'Manguharjo',
+                'Taman',
+                'Wungu',
+                'Sawahan'
+            ],
+            'Kediri' => [
+                'Pesantren',
+                'Mojoroto',
+                'Kota',
+                'Pare',
+                'Kandangan'
+            ],
+            'Blitar' => [
+                'Sananwetan',
+                'Sukorejo',
+                'Kepanjenkidul',
+                'Kanigoro',
+                'Garum'
+            ]
+        ];
+
+        // Mengembalikan view dengan daftar produk dan kota beserta kecamatannya
+        return view('bookings.create', compact('products', 'cities'));
     }
-
-
 
     public function store(Request $request)
     {
         $request->validate([
             'product_id' => 'required|exists:products,id',
+            'city' => 'required|string', // Validasi untuk kota
+            'subdistrict' => 'required|string', // Validasi untuk kecamatan
             'location' => 'required|string|max:255',
             'auction_start' => 'required|date',
             'auction_end' => 'required|date'
@@ -41,12 +134,16 @@ class BookingController extends Controller
             'seller_id' => Auth::id(),
             'buyer_id' => null, // Jika belum ada pembeli, set sebagai null
             'location' => $request->location,
+            'city' => $request->city, // Menyimpan kota yang dipilih
+            'subdistrict' => $request->subdistrict, // Menyimpan kecamatan yang dipilih
             'auction_start' => $request->auction_start,
             'auction_end' => $request->auction_end
         ]);
 
         return redirect()->route('bookings.index')->with('success', 'Produk berhasil didaftarkan untuk lelang');
     }
+
+
     public function show($id)
     {
         $booking = Booking::with('product', 'product.seller')->findOrFail($id);

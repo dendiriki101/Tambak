@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('seller_id');
             $table->string('name');
+            $table->string('jenis_ikan'); // Menambahkan kolom jenis ikan
             $table->text('description');
             $table->decimal('price', 8, 2);
             $table->string('image')->nullable();

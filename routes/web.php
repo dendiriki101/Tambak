@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\QrCodeController;
 
 
 Route::get('/', function () {
@@ -12,10 +13,13 @@ Route::get('/', function () {
 });
 
 
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::get('profile/edit', [AuthController::class, 'showEditProfileForm'])->name('profile.edit');
+    Route::post('profile/edit', [AuthController::class, 'updateProfile'])->name('profile.update');
 });
 
 Route::middleware(['guest'])->group(function () {
@@ -23,6 +27,8 @@ Route::middleware(['guest'])->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::get('register', [AuthController::class, 'showRegistrationForm'])->name('register');
     Route::post('register', [AuthController::class, 'register']);
+    Route::get('/generate-qrcode', [QrCodeController::class, 'generateAndSaveQrCode']);
+    Route::get('/generate-excel', [QrCodeController::class, 'generateAndSaveQrCodeToExcel']);
 
 });
 
@@ -46,6 +52,8 @@ Route::middleware(['auth', 'can:penjual'])->group(function () {
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::get('/seller-bookings', [BookingController::class, 'sellerBookings'])->name('seller-bookings');
 });
+
+
 
 
 

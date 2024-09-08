@@ -13,8 +13,9 @@ class CreateBookingsTable extends Migration
             $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('buyer_id');
             $table->string('location');
+            $table->string('city');
+            $table->string('subdistrict');
             $table->timestamps();
-
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('buyer_id')->references('id')->on('users')->onDelete('cascade');
         });

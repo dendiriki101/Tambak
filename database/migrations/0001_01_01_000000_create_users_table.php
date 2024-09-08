@@ -15,13 +15,15 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('no_hp')->nullable(); // Menambahkan kolom No HP
+            $table->string('no_ktp')->unique(); // Menambahkan kolom No KTP
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('role')->default('pembeli'); // Default sebagai pembeli
+            $table->string('profile_picture_url')->nullable(); // Menambahkan kolom URL Foto Profil
             $table->rememberToken();
             $table->timestamps();
         });
-
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();

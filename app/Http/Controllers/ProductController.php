@@ -26,6 +26,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required',
             'price' => 'required|numeric',
+            'jenis_ikan' => 'required|string', // Tambahkan validasi jenis ikan
             'image' => 'nullable|image|max:2048'
         ]);
 
@@ -34,21 +35,12 @@ class ProductController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
+            'jenis_ikan' => $request->jenis_ikan, // Simpan jenis ikan
             'image' => $request->file('image') ? $request->file('image')->store('products', 'public') : null
         ]);
         $product->save();
 
         return redirect()->route('dashboard')->with('success', 'Product has been added successfully');
-    }
-
-    public function edit(Product $product)
-    {
-        // Memastikan hanya penjual yang bisa mengedit produknya
-        if ($product->seller_id != Auth::id()) {
-            return redirect('/dashboard')->with('error', 'Unauthorized access.');
-        }
-
-        return view('products.edit', compact('product'));
     }
 
     public function update(Request $request, Product $product)
@@ -57,6 +49,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required',
             'price' => 'required|numeric',
+            'jenis_ikan' => 'required|string', // Tambahkan validasi jenis ikan
             'image' => 'nullable|image|max:2048'
         ]);
 
@@ -68,10 +61,22 @@ class ProductController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
+            'jenis_ikan' => $request->jenis_ikan, // Update jenis ikan
             'image' => $request->file('image') ? $request->file('image')->store('products', 'public') : $product->image
         ]);
 
         return redirect()->route('dashboard')->with('success', 'Product updated successfully.');
+    }
+
+
+    public function edit(Product $product)
+    {
+        // Memastikan hanya penjual yang bisa mengedit produknya
+        if ($product->seller_id != Auth::id()) {
+            return redirect('/dashboard')->with('error', 'Unauthorized access.');
+        }
+
+        return view('products.edit', compact('product'));
     }
 
     public function show(Product $product)
