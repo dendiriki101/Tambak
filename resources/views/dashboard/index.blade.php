@@ -3,67 +3,121 @@
 @section('title', 'Dashboard')
 
 @section('content')
-
-
-<style>
-    .card-footer .btn-block {
-        width: 100%;  /* Membuat tombol memenuhi seluruh lebar footer */
-    }
-</style>
 <div class="container mt-4">
-    <h1 class="display-4 text-center mb-4">Selamat Datang di Tambak Online</h1>
+    <h1 class="display-4 text-center mb-4">Dashboard Pembeli</h1>
 
-    @can('pembeli')
-    <div class="alert alert-success" role="alert">
-        Anda login sebagai Pembeli. Temukan produk terbaru di bawah ini!
-    </div>
-    <div class="container">
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
+    @if(Auth::user()->can('pembeli'))
+    <!-- Filter Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Filter Produk
         </div>
-    @endif
-    <!-- Konten lainnya di sini -->
-    </div>
-    @endcan
+        <div class="card-body">
+            <form method="GET" action="{{ route('dashboard') }}">
+                <div class="row">
+                    <!-- Filter by Jenis Ikan -->
+                    <div class="col-md-3 mb-3">
+                        <label for="jenis_ikan" class="form-label">Jenis Ikan</label>
+                        <select class="form-select" id="jenis_ikan" name="jenis_ikan">
+                            <option value="">Semua</option>
+                            @foreach($jenisIkans as $ikan)
+                                <option value="{{ $ikan->jenis_ikan }}" {{ request('jenis_ikan') == $ikan->jenis_ikan ? 'selected' : '' }}>
+                                    {{ ucfirst($ikan->jenis_ikan) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-   @can('penjual')
-    <div class="d-flex justify-content-center mb-3">
-        <a href="{{ route('products.create') }}" class="btn btn-success btn-lg">Tambah Produk Baru</a>
-    </div>
-    @endcan
+                    <!-- Filter by Location -->
+                    <div class="col-md-3 mb-3">
+                        <label for="city" class="form-label">Lokasi</label>
+                        <select class="form-select" id="city" name="city">
+                            <option value="">Semua</option>
+                            @foreach($cities as $city)
+                                <option value="{{ $city->city }}" {{ request('city') == $city->city ? 'selected' : '' }}>
+                                    {{ ucfirst($city->city) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
+                    <!-- Filter by Harga -->
+                    <div class="col-md-3 mb-3">
+                        <label for="price_min" class="form-label">Harga Minimum</label>
+                        <input type="number" class="form-control" id="price_min" name="price_min" value="{{ request('price_min') }}">
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="price_max" class="form-label">Harga Maksimum</label>
+                        <input type="number" class="form-control" id="price_max" name="price_max" value="{{ request('price_max') }}">
+                    </div>
+
+                    <!-- Filter by Auction Dates -->
+                    <div class="col-md-3 mb-3">
+                        <label for="auction_start" class="form-label">Jadwal Panen Mulai</label>
+                        <input type="date" class="form-control" id="auction_start" name="auction_start" value="{{ request('auction_start') }}">
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="auction_end" class="form-label">Jadwal Panen Selesai</label>
+                        <input type="date" class="form-control" id="auction_end" name="auction_end" value="{{ request('auction_end') }}">
+                    </div>
+
+                    <!-- Filter Button -->
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary btn-block">Terapkan Filter</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Products Section -->
     <div class="row row-cols-1 row-cols-md-3 g-4">
-        @foreach ($products as $product)
-        <div class="col">
-            <div class="card h-100">
-                <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top product-image" alt="Product Image" style="height: 200px; object-fit: cover;">
+        @forelse($products as $product)
+        <div class="col mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="Product Image" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
                     <h5 class="card-title">{{ $product->name }}</h5>
-                    <p class="card-text">{{ Str::limit($product->description, 100, '...') }}</p>
-                    <p class="card-text"><small class="text-muted">Rp{{ number_format($product->price, 2) }}</small></p>
+                    <p class="card-text">{{ Str::limit($product->description, 100) }}</p>
+                    <p class="card-text">Harga: Rp{{ number_format($product->price, 0, ',', '.') }}</p>
                 </div>
-                <div class="card-footer d-grid gap-2">
-                    @can('pembeli')
-                        <a href="{{ route('products.show', $product->id) }}" class="btn btn-info btn-block">Detail</a>
-                        @if($product->activeBooking && $product->activeBooking->status === 'aktif')
-                            <form action="{{ route('bookings.add-user', $product->activeBooking->id) }}" method="POST" class="d-grid">
-                                @csrf
-                                <button type="submit" class="btn btn-warning btn-block">Booking</button>
-                            </form>
-                        @else
-                            <button class="btn btn-secondary disabled btn-block">Tidak Tersedia untuk Booking</button>
-                        @endif
-                    @endcan
-                    @can('penjual')
-                    <a href="{{ route('products.edit', $product->id) }}" class="btn btn-lg btn-primary">Edit</a>
-                    @endcan
-                    <hr>
-                    <small class="text-muted float-right">Last updated {{ $product->updated_at->diffForHumans() }}</small>
+                <div class="card-footer d-flex justify-content-between">
+                    <a href="{{ route('products.show', $product->id) }}" class="btn btn-info btn-sm">Detail</a>
+                    @if($product->activeBooking && $product->activeBooking->status === 'aktif')
+                    <form action="{{ route('bookings.add-user', $product->activeBooking->id) }}" method="POST" class="mb-0">
+                        @csrf
+                        <button type="submit" class="btn btn-warning btn-sm">Booking</button>
+                    </form>
+                    @else
+                    <button class="btn btn-secondary btn-sm" disabled>Tidak Tersedia untuk Booking</button>
+                    @endif
+                </div>
+            </div>
+        </div>
+        @empty
+        <p class="text-center">Tidak ada produk yang ditemukan sesuai filter.</p>
+        @endforelse
+    </div>
+
+    @elsecan('penjual')
+    <h2>Produk Saya</h2>
+    <div class="row">
+        @foreach($products as $product)
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ $product->name }}</h5>
+                    <p class="card-text">{{ Str::limit($product->description, 100) }}</p>
+                    <p class="card-text">Harga: Rp{{ number_format($product->price, 0, ',', '.') }}</p>
+                    <a href="{{ route('products.edit', $product->id) }}" class="btn btn-primary">Edit Produk</a>
                 </div>
             </div>
         </div>
         @endforeach
     </div>
+    @endcan
 </div>
 @endsection
