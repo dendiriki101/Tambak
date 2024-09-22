@@ -8,6 +8,18 @@
         <div class="card bg-light bg-opacity-75"> <!-- Tambahkan class transparan -->
             <div class="card-header">Login ke Akun Anda</div>
             <div class="card-body">
+
+                <!-- Tampilkan error jika ada -->
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
                     <div class="mb-3">

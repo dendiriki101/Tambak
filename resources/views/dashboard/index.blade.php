@@ -4,10 +4,12 @@
 
 @section('content')
 <div class="container mt-4">
-    <h1 class="display-4 text-center mb-4">Dashboard Pembeli</h1>
+    
 
     @if(Auth::user()->can('pembeli'))
     <!-- Filter Section -->
+    <h1 class="display-4 text-center mb-4">Dashboard Pembeli</h1>
+
     <div class="card mb-4">
         <div class="card-header">
             Filter Produk
@@ -73,6 +75,7 @@
     </div>
 
     <!-- Products Section -->
+<!-- Products Section -->
     <div class="row row-cols-1 row-cols-md-3 g-4">
         @forelse($products as $product)
         <div class="col mb-4">
@@ -86,10 +89,7 @@
                 <div class="card-footer d-flex justify-content-between">
                     <a href="{{ route('products.show', $product->id) }}" class="btn btn-info btn-sm">Detail</a>
                     @if($product->activeBooking && $product->activeBooking->status === 'aktif')
-                    <form action="{{ route('bookings.add-user', $product->activeBooking->id) }}" method="POST" class="mb-0">
-                        @csrf
-                        <button type="submit" class="btn btn-warning btn-sm">Booking</button>
-                    </form>
+                    <a href="{{ route('my-bookings', ['product_id' => $product->id]) }}" class="btn btn-warning btn-sm">Booking</a>
                     @else
                     <button class="btn btn-secondary btn-sm" disabled>Tidak Tersedia untuk Booking</button>
                     @endif
@@ -101,7 +101,14 @@
         @endforelse
     </div>
 
+
     @elsecan('penjual')
+    @can('penjual')
+    <h1 class="display-4 text-center mb-4">Dashboard Pembeli</h1>
+    <div class="d-flex justify-content-center mb-3">
+        <a href="{{ route('products.create') }}" class="btn btn-success btn-lg">Tambah Produk Baru</a>
+    </div>
+    @endcan
     <h2>Produk Saya</h2>
     <div class="row">
         @foreach($products as $product)

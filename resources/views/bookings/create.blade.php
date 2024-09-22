@@ -9,6 +9,7 @@
         @if ($products->isNotEmpty())
             <form method="POST" action="{{ route('bookings.store') }}">
                 @csrf
+                <!-- Pilih Produk -->
                 <div class="mb-3">
                     <label for="product_id" class="form-label">Pilih Produk:</label>
                     <select class="form-select" id="product_id" name="product_id">
@@ -37,19 +38,28 @@
                     </select>
                 </div>
 
+                <!-- Lokasi -->
                 <div class="mb-3">
                     <label for="location" class="form-label">Lokasi Lelang:</label>
                     <input type="text" class="form-control" id="location" name="location" required>
                 </div>
 
+                <!-- Mulai Lelang -->
                 <div class="mb-3">
                     <label for="auction_start" class="form-label">Mulai Lelang:</label>
                     <input type="date" class="form-control" id="auction_start" name="auction_start" required>
                 </div>
 
+                <!-- Akhir Lelang -->
                 <div class="mb-3">
                     <label for="auction_end" class="form-label">Akhir Lelang:</label>
                     <input type="date" class="form-control" id="auction_end" name="auction_end" required>
+                </div>
+
+                <!-- Jumlah -->
+                <div class="mb-3">
+                    <label for="jumlah" class="form-label">Jumlah Produk:</label>
+                    <input type="number" class="form-control" id="jumlah" name="jumlah" required min="1">
                 </div>
 
                 <button type="submit" class="btn btn-primary">Daftarkan</button>
@@ -73,10 +83,7 @@
         subdistrictSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
 
         if (selectedCity && subdistrictsData[selectedCity]) {
-            // Enable the subdistrict select box
             subdistrictSelect.disabled = false;
-
-            // Populate subdistrict options
             subdistrictsData[selectedCity].forEach(function(subdistrict) {
                 const option = document.createElement('option');
                 option.value = subdistrict;
@@ -84,7 +91,6 @@
                 subdistrictSelect.appendChild(option);
             });
         } else {
-            // Disable the subdistrict select box if no city selected
             subdistrictSelect.disabled = true;
         }
     }

@@ -9,6 +9,18 @@
             <div class="card" style="background-color: rgba(255, 255, 255, 0.8); border-radius: 10px;">
                 <div class="card-header">Daftar Akun Baru</div>
                 <div class="card-body">
+
+                    <!-- Tampilkan error jika ada -->
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <form method="POST" action="{{ route('register') }}">
                         @csrf
                         <div class="mb-3">

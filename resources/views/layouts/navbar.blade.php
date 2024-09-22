@@ -16,12 +16,12 @@
 
                     @if (Auth::user()->role == 'pembeli')
                         <a class="nav-link" href="{{ route('my-bookings') }}">My Bookings</a>
+                        <a class="nav-link" href="{{ route('history') }}">History</a> <!-- Menggunakan route history -->
                     @endif
 
                     <!-- Dropdown untuk Edit Profil dan Logout -->
                     <div class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <!-- Menampilkan gambar profil atau default -->
                             <img src="{{ Auth::user()->profile_picture_url ?? asset('img/default-profile.png') }}" alt="Profile" class="rounded-circle" width="30" height="30">
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">

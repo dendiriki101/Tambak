@@ -12,6 +12,7 @@
                 <th>Pembeli</th>
                 <th>Status Booking</th>
                 <th>Tanggal Booking</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -22,6 +23,16 @@
                     <td>{{ $user->name }}</td>
                     <td>{{ $booking->status }}</td>
                     <td>{{ $booking->created_at->format('d M Y') }}</td>
+                    <td>
+                        @if ($booking->status !== 'Dikonfirmasi') <!-- Cek status booking -->
+                        <form action="{{ route('confirm.booking', $booking->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-success btn-sm">Konfirmasi</button>
+                        </form>
+                        @else
+                        <button class="btn btn-secondary btn-sm" disabled>Dikonfirmasi</button> <!-- Tombol dinonaktifkan -->
+                        @endif
+                    </td>
                 </tr>
                 @endforeach
             @endforeach

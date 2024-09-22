@@ -33,8 +33,9 @@ class AuthController extends Controller
             Log::info('User logged in: ' . Auth::id());
             return redirect()->intended('dashboard');
         }
-        return back()->withErrors(['email' => 'The provided credentials do not match our records.']);
+        return back()->withErrors(['email' => 'Email atau password Salah.']);
     }
+    
 
     public function register(Request $request)
     {

@@ -36,6 +36,9 @@ Route::middleware(['auth', 'can:pembeli'])->group(function () {
     Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
     Route::post('/bookings/add-user/{booking}', [BookingController::class, 'addUser'])->name('bookings.add-user');
     Route::get('/my-bookings', [BookingController::class, 'myBookings'])->name('my-bookings');
+    Route::post('/confirm-order', [BookingController::class, 'confirmOrder'])->name('confirm.order');
+    Route::get('/history', [BookingController::class, 'showHistory'])->name('history');
+    
 });
 
 
@@ -45,6 +48,8 @@ Route::middleware(['auth', 'can:penjual'])->group(function () {
     Route::patch('/bookings/complete/{booking}', [BookingController::class, 'complete'])->name('bookings.complete');
     Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
     Route::post('/bookings/register', [BookingController::class, 'register'])->name('bookings.register');
+    Route::post('/confirm-booking/{id}', [BookingController::class, 'confirmBooking'])->name('confirm.booking');
+
 
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
