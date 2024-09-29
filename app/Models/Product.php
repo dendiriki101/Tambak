@@ -23,8 +23,11 @@ class Product extends Model
 
     public function activeBooking()
     {
-        return $this->hasOne(Booking::class)->where('status', 'aktif');
+        return $this->hasOne(Booking::class)
+                    ->where('status', '!=', 'selesai')
+                    ->where('jumlah', '>', 0);
     }
+    
 
 
 }

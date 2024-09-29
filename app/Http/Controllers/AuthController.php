@@ -36,7 +36,6 @@ class AuthController extends Controller
         return back()->withErrors(['email' => 'Email atau password Salah.']);
     }
     
-
     public function register(Request $request)
     {
         $request->validate([
@@ -47,20 +46,23 @@ class AuthController extends Controller
             'no_ktp' => 'required|string|max:16|unique:users', // Validasi untuk No KTP
             'role' => 'required|in:pembeli,penjual'
         ]);
-
+    
+        // Simpan pengguna baru dengan foto profil default
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'no_hp' => $request->no_hp, // Simpan No HP
             'no_ktp' => $request->no_ktp, // Simpan No KTP
-            'role' => $request->role
+            'role' => $request->role,
+            'profile_picture_url' => 'storage/profile/default_profile.webp' // Ganti dengan path sesuai gambar default
         ]);
-
+    
         Auth::login($user);
-
+    
         return redirect()->route('dashboard');
     }
+    
 
     public function showEditProfileForm()
     {

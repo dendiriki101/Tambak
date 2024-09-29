@@ -15,7 +15,7 @@
                     @endif
 
                     @if (Auth::user()->role == 'pembeli')
-                        <a class="nav-link" href="{{ route('my-bookings') }}">My Bookings</a>
+                        <a class="nav-link" href="{{ route('cart.view') }}">My Bookings</a>
                         <a class="nav-link" href="{{ route('history') }}">History</a> <!-- Menggunakan route history -->
                     @endif
 

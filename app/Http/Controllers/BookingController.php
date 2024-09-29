@@ -171,19 +171,19 @@ class BookingController extends Controller
 
         return redirect()->route('bookings.index')->with('success', 'Booking telah ditandai sebagai selesai.');
     }
-    public function addUser(Request $request, $bookingId)
-    {
-        $booking = Booking::findOrFail($bookingId);
-        $user = Auth::user();
+    // public function addUser(Request $request, $bookingId)
+    // {
+    //     $booking = Booking::findOrFail($bookingId);
+    //     $user = Auth::user();
 
-        // Menambahkan user ke booking
-        $booking->users()->syncWithoutDetaching([$user->id]);
+    //     // Menambahkan user ke booking
+    //     $booking->users()->syncWithoutDetaching([$user->id]);
 
-        // Menambahkan flash message ke sesi
-        session()->flash('success', 'Booking berhasil! Anda telah berhasil booking produk ini.');
+    //     // Menambahkan flash message ke sesi
+    //     session()->flash('success', 'Booking berhasil! Anda telah berhasil booking produk ini.');
 
-        return redirect()->route('dashboard');
-    }
+    //     return redirect()->route('dashboard');
+    // }
 
     public function sellerBookings()
     {
@@ -241,17 +241,19 @@ class BookingController extends Controller
 
     public function confirmOrder(Request $request)
     {
+        // Validasi input dari form
         $request->validate([
             'jumlah' => 'required|integer|min:1',
             'product_id' => 'required|exists:products,id',
         ]);
     
+        // Ambil produk berdasarkan ID yang dikirimkan dalam request
         $product = Product::findOrFail($request->product_id);
         $jumlah = $request->jumlah;
         $total_harga = $product->price * $jumlah;
     
-        // Simpan ke tabel history
-        History::create([
+        // Simpan informasi order ke tabel history
+        $history = History::create([
             'user_id' => auth()->id(),
             'product_id' => $product->id,
             'jumlah' => $jumlah,
@@ -259,9 +261,42 @@ class BookingController extends Controller
             'status' => 'pending',
         ]);
     
-        return redirect()->route('history')->with('success', 'Pesanan berhasil dibuat!');
+        // Pencarian booking yang aktif berdasarkan produk (pastikan tabel booking memiliki relasi ke product)
+        $booking = Booking::where('product_id', $product->id)->first();
+    
+        if ($booking) {
+            // Ambil user yang sedang login
+            $user = Auth::user();
+    
+            // Menambahkan user ke dalam booking
+            $booking->users()->syncWithoutDetaching([$user->id]);
+    
+            // Menambahkan flash message ke sesi untuk menandai bahwa booking berhasil
+            session()->flash('success', 'Booking berhasil! Anda telah berhasil memesan produk ini.');
+        } else {
+            // Jika tidak ada booking yang cocok, tambahkan flash message error
+            session()->flash('error', 'Booking tidak tersedia untuk produk ini.');
+        }
+    
+        // Hapus item dari keranjang setelah konfirmasi pesanan
+        CartItem::where('user_id', Auth::id())
+            ->where('product_id', $product->id)
+            ->delete();
+    
+        // Redirect ke dashboard atau halaman lain setelah proses selesai
+        return redirect()->route('dashboard');
     }
     
+    
+    // if ($booking) {
+    //     // Ambil user yang sedang login
+    //     $user = Auth::user();
+
+    //     // Menambahkan user ke dalam booking
+    //     $booking->users()->syncWithoutDetaching([$user->id]);
+
+    //     // Menambahkan flash message ke sesi untuk menandai bahwa booking berhasil
+    //     session()->flash('success', 'Booking berhasil! Anda telah berhasil memesan produk ini.');
 
 
     public function showHistory()
@@ -272,6 +307,39 @@ class BookingController extends Controller
     }
 
 
+    public function addToCart(Request $request)
+    {
+        $cartItem = CartItem::updateOrCreate(
+            [
+                'user_id' => Auth::id(),
+                'product_id' => $request->product_id,
+            ],
+            [
+                'quantity' => \DB::raw("quantity + $request->quantity")
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Produk berhasil ditambahkan ke keranjang!');
+    }
+
+    // Fungsi untuk melihat produk di keranjang
+    public function viewCart()
+    {
+        $cartItems = CartItem::where('user_id', Auth::id())
+                             ->with('product') // Mengambil detail produk
+                             ->get();
+
+        return view('cart.view', compact('cartItems'));
+    }
+
+    // Fungsi untuk menghapus produk dari keranjang
+    public function removeFromCart($id)
+    {
+        $cartItem = CartItem::where('user_id', Auth::id())->findOrFail($id);
+        $cartItem->delete();
+
+        return redirect()->back()->with('success', 'Produk berhasil dihapus dari keranjang!');
+    }
 
 
 }

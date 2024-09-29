@@ -10,6 +10,21 @@
     <!-- Filter Section -->
     <h1 class="display-4 text-center mb-4">Dashboard Pembeli</h1>
 
+    <!-- Menampilkan Notifikasi -->
+    @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
     <div class="card mb-4">
         <div class="card-header">
             Filter Produk
@@ -75,7 +90,6 @@
     </div>
 
     <!-- Products Section -->
-<!-- Products Section -->
     <div class="row row-cols-1 row-cols-md-3 g-4">
         @forelse($products as $product)
         <div class="col mb-4">
@@ -85,14 +99,17 @@
                     <h5 class="card-title">{{ $product->name }}</h5>
                     <p class="card-text">{{ Str::limit($product->description, 100) }}</p>
                     <p class="card-text">Harga: Rp{{ number_format($product->price, 0, ',', '.') }}</p>
+                    <p class="card-text">Jumlah Tersedia: {{ $product->activeBooking->jumlah ?? '0' }}</p>
                 </div>
+                <a href="{{ route('products.show', $product->id) }}" class="btn btn-info btn-sm">Detail</a>
                 <div class="card-footer d-flex justify-content-between">
-                    <a href="{{ route('products.show', $product->id) }}" class="btn btn-info btn-sm">Detail</a>
-                    @if($product->activeBooking && $product->activeBooking->status === 'aktif')
-                    <a href="{{ route('my-bookings', ['product_id' => $product->id]) }}" class="btn btn-warning btn-sm">Booking</a>
-                    @else
-                    <button class="btn btn-secondary btn-sm" disabled>Tidak Tersedia untuk Booking</button>
-                    @endif
+                    <form action="{{ route('cart.add') }}" method="POST" class="d-flex">
+                        @csrf
+                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                        <!-- Mengatur jumlah default ke nol -->
+                        <input type="hidden" name="jumlah" value="0">
+                        <button type="submit" class="btn btn-warning btn-sm mt-2">Tambah ke Keranjang</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -100,6 +117,10 @@
         <p class="text-center">Tidak ada produk yang ditemukan sesuai filter.</p>
         @endforelse
     </div>
+
+
+
+   
 
 
     @elsecan('penjual')

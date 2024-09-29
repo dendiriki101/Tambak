@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\QrCodeController;
+use App\Http\Controllers\CartController; // Pastikan ini ada
 
 
 Route::get('/', function () {
@@ -34,10 +35,13 @@ Route::middleware(['guest'])->group(function () {
 
 Route::middleware(['auth', 'can:pembeli'])->group(function () {
     Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
-    Route::post('/bookings/add-user/{booking}', [BookingController::class, 'addUser'])->name('bookings.add-user');
+    // Route::post('/bookings/add-user/{booking}', [BookingController::class, 'addUser'])->name('bookings.add-user');
     Route::get('/my-bookings', [BookingController::class, 'myBookings'])->name('my-bookings');
     Route::post('/confirm-order', [BookingController::class, 'confirmOrder'])->name('confirm.order');
     Route::get('/history', [BookingController::class, 'showHistory'])->name('history');
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
+    Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     
 });
 
