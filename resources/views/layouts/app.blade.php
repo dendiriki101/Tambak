@@ -14,6 +14,19 @@
             height: 200px; /* Tinggi tetap */
             object-fit: cover; /* Memastikan gambar menutupi area tersebut tanpa mengubah rasio aspek */
         }
+        .product-details h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .product-price {
+            font-size: 1.75rem;
+        }
+
+        .product-location, .product-seller {
+            font-size: 1.25rem;
+        }
+
     </style>
 
     @include('layouts.navbar')

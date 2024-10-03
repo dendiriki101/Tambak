@@ -42,7 +42,7 @@ Route::middleware(['auth', 'can:pembeli'])->group(function () {
     Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
     Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
     Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
-    
+
 });
 
 
@@ -53,6 +53,9 @@ Route::middleware(['auth', 'can:penjual'])->group(function () {
     Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
     Route::post('/bookings/register', [BookingController::class, 'register'])->name('bookings.register');
     Route::post('/confirm-booking/{id}', [BookingController::class, 'confirmBooking'])->name('confirm.booking');
+    Route::DELETE('/cancel-booking/{bookingId}/{userId}', [BookingController::class, 'cancelBooking'])->name('cancel.booking');
+
+
 
 
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');

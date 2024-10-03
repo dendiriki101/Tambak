@@ -45,9 +45,10 @@ class User extends Authenticatable
     public function bookings()
     {
         return $this->belongsToMany(Booking::class, 'booking_user')
-                    ->withPivot('status')
+                    ->withPivot('status', 'id') // Sertakan 'id' di sini
                     ->withTimestamps();
     }
+
 
 
     public function seller()

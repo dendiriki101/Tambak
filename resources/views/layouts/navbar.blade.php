@@ -22,7 +22,7 @@
                     <!-- Dropdown untuk Edit Profil dan Logout -->
                     <div class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="{{ Auth::user()->profile_picture_url ?? asset('img/default-profile.png') }}" alt="Profile" class="rounded-circle" width="30" height="30">
+                            <img src="{{ asset(Auth::user()->profile_picture_url) }}" alt="Profile" class="rounded-circle" width="30" height="30">
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Edit Profil</a></li>
@@ -41,3 +41,4 @@
         </div>
     </div>
 </nav>
+

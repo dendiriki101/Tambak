@@ -42,12 +42,56 @@
 
         <!-- Gambar Produk -->
         <div class="mb-3">
-            <label for="image" class="form-label">Gambar Produk</label>
+            <label for="image" class="form-label">Gambar Utama Produk</label>
             <input type="file" class="form-control" id="image" name="image">
             @if ($product->image)
                 <img src="{{ asset('storage/' . $product->image) }}" alt="Gambar Produk" class="img-thumbnail mt-2" width="150">
             @else
                 <p>Tidak ada gambar.</p>
+            @endif
+        </div>
+
+        <!-- Gambar Produk 2 -->
+        <div class="mb-3">
+            <label for="image2" class="form-label">Gambar Produk 2</label>
+            <input type="file" class="form-control" id="image2" name="image2">
+            @if ($product->image2)
+                <img src="{{ asset('storage/' . $product->image2) }}" alt="Gambar Produk 2" class="img-thumbnail mt-2" width="150">
+            @else
+                <p>Tidak ada gambar 2.</p>
+            @endif
+        </div>
+
+        <!-- Gambar Produk 3 -->
+        <div class="mb-3">
+            <label for="image3" class="form-label">Gambar Produk 3</label>
+            <input type="file" class="form-control" id="image3" name="image3">
+            @if ($product->image3)
+                <img src="{{ asset('storage/' . $product->image3) }}" alt="Gambar Produk 3" class="img-thumbnail mt-2" width="150">
+            @else
+                <p>Tidak ada gambar 3.</p>
+            @endif
+        </div>
+
+        <!-- Gambar Produk 4 -->
+        <div class="mb-3">
+            <label for="image4" class="form-label">Gambar Produk 4</label>
+            <input type="file" class="form-control" id="image4" name="image4">
+            @if ($product->image4)
+                <img src="{{ asset('storage/' . $product->image4) }}" alt="Gambar Produk 4" class="img-thumbnail mt-2" width="150">
+            @else
+                <p>Tidak ada gambar 4.</p>
+            @endif
+        </div>
+
+        <!-- Gambar Produk 5 -->
+        <div class="mb-3">
+            <label for="image5" class="form-label">Gambar Produk 5</label>
+            <input type="file" class="form-control" id="image5" name="image5">
+            @if ($product->image5)
+                <img src="{{ asset('storage/' . $product->image5) }}" alt="Gambar Produk 5" class="img-thumbnail mt-2" width="150">
+            @else
+                <p>Tidak ada gambar 5.</p>
             @endif
         </div>
 

@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container mt-4">
-    
+
 
     @if(Auth::user()->can('pembeli'))
     <!-- Filter Section -->
@@ -97,7 +97,7 @@
                 <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="Product Image" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
                     <h5 class="card-title">{{ $product->name }}</h5>
-                    <p class="card-text">{{ Str::limit($product->description, 100) }}</p>
+                    <p class="card-text">{{ Str::limit($product->description, 80) }}</p>
                     <p class="card-text">Harga: Rp{{ number_format($product->price, 0, ',', '.') }}</p>
                     <p class="card-text">Jumlah Tersedia: {{ $product->activeBooking->jumlah ?? '0' }}</p>
                 </div>
@@ -120,7 +120,7 @@
 
 
 
-   
+
 
 
     @elsecan('penjual')
@@ -138,7 +138,7 @@
                 <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
                     <h5 class="card-title">{{ $product->name }}</h5>
-                    <p class="card-text">{{ Str::limit($product->description, 100) }}</p>
+                    <p class="card-text">{{ Str::limit($product->description, 80) }}</p>
                     <p class="card-text">Harga: Rp{{ number_format($product->price, 0, ',', '.') }}</p>
                     <a href="{{ route('products.edit', $product->id) }}" class="btn btn-primary">Edit Produk</a>
                 </div>

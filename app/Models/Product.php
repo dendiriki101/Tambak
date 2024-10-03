@@ -9,7 +9,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['seller_id', 'name', 'description', 'price', 'image', 'jenis_ikan'];
+    protected $fillable = ['seller_id', 'name', 'description', 'price', 'image', 'jenis_ikan', 'image2', 'image3', 'image4', 'image5'];
 
     public function seller()
     {
@@ -27,7 +27,12 @@ class Product extends Model
                     ->where('status', '!=', 'selesai')
                     ->where('jumlah', '>', 0);
     }
-    
+
+    public function history()
+    {
+        return $this->hasMany(History::class);
+    }
+
 
 
 }
