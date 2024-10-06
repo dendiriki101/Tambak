@@ -26,44 +26,45 @@
                 <th>Status</th>
                 <th>Status Booking</th>
                 <th>Tanggal Booking</th>
-                <th>Jumlah</th> <!-- Kolom untuk jumlah -->
                 <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($bookings as $booking)
-                @foreach ($booking->users as $user)
+            @foreach ($bookingUsers as $bookingUser)
                 <tr>
-                    {{-- {{ dd($user->pivot) }} <!-- Cek isi pivot di sini --> --}}
-                    <td>{{ $booking->product->name }}</td>
-                    <td>{{ $user->name }}</td>
-                    <td>{{ $user->pivot->status }}</td>
-                    <td>{{ $booking->status }}</td>
-                    <td>{{ $booking->created_at->format('d M Y') }}</td>
                     <td>
                         @php
-                            // Ambil jumlah dari history yang terkait
-                            $history = $booking->product->history->where('product_id', $booking->product_id)->first();
+                            // Ambil produk yang terkait dengan booking
+                            $product = \App\Models\Product::find($bookingUser->product_id);
                         @endphp
-                        {{ $history ? $history->jumlah : 'N/A' }} <!-- Tampilkan jumlah -->
+                        {{ $product ? $product->name : 'Produk tidak ditemukan' }}
                     </td>
                     <td>
-                        @if ($user->pivot->status !== 'Pesanan Diterima' && $user->pivot->status !== 'Dibatalkan') <!-- Cek status booking -->
-                        <form action="{{ route('confirm.booking', $booking->id) }}" method="POST" class="d-inline">
+                        @php
+                            // Ambil user (pembeli) yang terkait dengan booking_user
+                            $buyer = \App\Models\User::find($bookingUser->user_id);
+                        @endphp
+                        {{ $buyer ? $buyer->name : 'Pembeli tidak ditemukan' }}
+                    </td>
+                    <td>{{ $bookingUser->status }}</td>
+                    <td>{{ $bookingUser->booking_status }}</td>
+                    <td>{{ \Carbon\Carbon::parse($bookingUser->booking_created_at)->format('d M Y') }}</td>
+                    <td>
+                        @if ($bookingUser->status !== 'Pesanan Diterima' && $bookingUser->status !== 'Dibatalkan')
+                        <form action="{{ route('confirm.booking', $bookingUser->booking_id) }}" method="POST" class="d-inline">
                             @csrf
                             <button type="submit" class="btn btn-success btn-sm">Konfirmasi</button>
                         </form>
-                        <form action="{{ route('cancel.booking', [$user->pivot->booking_id, $user->pivot->user_id]) }}" method="POST" class="d-inline">
+                        <form action="{{ route('cancel.booking', [$bookingUser->booking_id, $bookingUser->user_id]) }}" method="POST" class="d-inline">
                             @csrf
-                            @method('DELETE') <!-- Menggunakan method DELETE untuk pembatalan -->
+                            @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm">Batalkan</button>
                         </form>
                         @else
-                        <button class="btn btn-secondary btn-sm" disabled>Dikonfirmasi</button> <!-- Tombol dinonaktifkan -->
+                        <button class="btn btn-secondary btn-sm" disabled>Selesai</button>
                         @endif
                     </td>
                 </tr>
-                @endforeach
             @endforeach
         </tbody>
     </table>

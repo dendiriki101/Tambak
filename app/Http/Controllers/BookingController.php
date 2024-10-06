@@ -188,16 +188,19 @@ class BookingController extends Controller
 
     public function sellerBookings()
     {
-        $seller_id = Auth::id();
-        $bookings = Booking::with(['product', 'users' => function ($query) {
-            $query->withPivot('status'); // Pastikan pivot juga di-load
-        }])
-        ->whereHas('product', function ($query) use ($seller_id) {
-            $query->where('seller_id', $seller_id);
-        })->get();
+        $seller_id = Auth::id(); // ID penjual yang sedang login
 
-        return view('bookings.seller-bookings', compact('bookings'));
+        // Mengambil booking di mana seller_id cocok dengan ID penjual yang sedang login
+        // Juga mengambil daftar users (pembeli) yang terkait melalui tabel pivot booking_user
+        $bookingUsers = \DB::table('booking_user')
+            ->join('bookings', 'booking_user.booking_id', '=', 'bookings.id')
+            ->where('bookings.seller_id', $seller_id)
+            ->select('booking_user.*', 'bookings.product_id', 'bookings.status as booking_status', 'bookings.created_at as booking_created_at')
+            ->get();
+
+        return view('bookings.seller-bookings', compact('bookingUsers'));
     }
+
 
 
 

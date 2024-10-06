@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Paginator;
 use App\Models\User;
 use App\Models\Booking; // Impor model Booking
+use App\Models\BookingUser; // Import model BookingUser
 use Illuminate\Support\Facades\Gate;
 use Carbon\Carbon; // Impor Carbon
 
@@ -35,10 +36,10 @@ class AppServiceProvider extends ServiceProvider
     });
 
     // Pengecekan untuk membatalkan booking yang masih pending
-    Booking::whereHas('users', function ($query) {
-        $query->where('booking_user.status', 'Pending') // Tambahkan alias booking_user di sini
-            ->where('booking_user.created_at', '<=', Carbon::now()->subDay()); // Tambahkan alias booking_user di sini
-    })->update(['status' => 'Dibatalkan']);
+     // Pengecekan untuk membatalkan booking yang masih pending selama lebih dari 1 hari di tabel booking_user
+     BookingUser::where('status', 'Pending') // Filter untuk status 'Pending'
+     ->where('created_at', '<=', Carbon::now()->subDay()) // Booking yang dibuat lebih dari 1 hari yang lalu
+     ->update(['status' => 'Dibatalkan']); // Update status menjadi 'Dibatalkan'
 }
 
 }
