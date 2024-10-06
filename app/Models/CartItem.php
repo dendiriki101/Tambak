@@ -11,7 +11,7 @@ class CartItem extends Model
 
     protected $table = 'cart_items';
 
-    protected $fillable = ['user_id', 'product_id', 'requested_quantity']; // Menambahkan kolom 'requested_quantity'
+    protected $fillable = ['user_id', 'product_id', 'requested_quantity','bookinguser_id']; // Menambahkan kolom 'requested_quantity'
 
     // Relasi ke model Product
     public function product()

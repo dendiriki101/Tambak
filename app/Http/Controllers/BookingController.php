@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Booking;
 use App\Models\History;
 use App\Models\CartItem;
+use App\Models\Bookinguser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -203,36 +204,39 @@ class BookingController extends Controller
 
 
 
-
     public function confirmBooking($bookingId)
     {
-        $booking = Booking::findOrFail($bookingId);
-        $history = History::where('product_id', $booking->product_id)->first();
+        // Ambil booking_user berdasarkan id yang diterima
+        $bookingUser = Bookinguser::findOrFail($bookingId);
+    
+        // Ambil booking berdasarkan booking_id di booking_user
+        $booking = Booking::findOrFail($bookingUser->booking_id);
 
+        // Update status di tabel booking_user
+        // Update status untuk user yang terkait dengan booking ini
+        $bookingUser->status = 'Pesanan Diterima'; // Ubah status sesuai kebutuhan
+        $bookingUser->save(); // Simpan perubahan
+
+        // Ambil history berdasarkan product_id dari booking
+        $history = History::where('bookinguser_id', $bookingUser->id)->first();
+    
         if ($history) {
-            // Kurangi jumlah di tabel history
-            $booking->jumlah -= $history->jumlah; // Asumsi 'jumlah' adalah kolom di tabel history
+            // Kurangi jumlah di tabel booking
+            $booking->jumlah -= $history->jumlah; // Asumsi 'jumlah' adalah kolom di tabel booking
             $booking->save();
-
+    
             // Update status di tabel history
             $history->status = 'Dikonfirmasi'; // Atau status lain yang sesuai
             $history->save();
-
-            // Update status di tabel booking_user
-            // Ambil semua user terkait dengan booking ini
-            $bookingUsers = $booking->users;
-
-            foreach ($bookingUsers as $bookingUser) {
-                // Update status untuk setiap user
-                $bookingUser->pivot->status = 'Pesanan Diterima'; // Ubah status sesuai kebutuhan
-                $bookingUser->pivot->save();
-            }
-
+    
+        
+    
             return redirect()->route('seller-bookings')->with('success', 'Booking berhasil dikonfirmasi.');
         }
-
+    
         return redirect()->route('seller-bookings')->with('error', 'History tidak ditemukan.');
     }
+    
 
 
 
@@ -256,6 +260,7 @@ class BookingController extends Controller
         return redirect()->route('my-bookings')->with('success', 'Booking berhasil diupdate!');
     }
 
+
     public function confirmOrder(Request $request)
     {
         // Validasi input dari form
@@ -263,46 +268,63 @@ class BookingController extends Controller
             'jumlah' => 'required|integer|min:1',
             'product_id' => 'required|exists:products,id',
         ]);
-
+    
         // Ambil produk berdasarkan ID yang dikirimkan dalam request
         $product = Product::findOrFail($request->product_id);
         $jumlah = $request->jumlah;
         $total_harga = $product->price * $jumlah;
-
-        // Simpan informasi order ke tabel history
-        $history = History::create([
-            'user_id' => auth()->id(),
-            'product_id' => $product->id,
-            'jumlah' => $jumlah,
-            'total_harga' => $total_harga,
-            'status' => 'pending',
-        ]);
-
-        // Pencarian booking yang aktif berdasarkan produk (pastikan tabel booking memiliki relasi ke product)
+    
+        // Pencarian booking yang aktif berdasarkan produk
         $booking = Booking::where('product_id', $product->id)->first();
-
+    
         if ($booking) {
             // Ambil user yang sedang login
             $user = Auth::user();
-
-            // Menambahkan user ke dalam booking
-            $booking->users()->syncWithoutDetaching([$user->id]);
-
+    
+            // Masukkan data ke dalam tabel booking_user secara manual menggunakan model Bookinguser
+            $bookingUser = Bookinguser::create([
+                'booking_id' => $booking->id,
+                'user_id' => $user->id,
+            ]);
+    
+            // Ambil bookinguser_id dari data yang baru saja dibuat
+            $bookinguser_id = $bookingUser->id;
+    
+            // Simpan informasi order ke tabel history dengan bookinguser_id
+            $history = History::create([
+                'user_id' => auth()->id(),
+                'product_id' => $product->id,
+                'jumlah' => $jumlah,
+                'total_harga' => $total_harga,
+                'status' => 'pending',
+                'bookinguser_id' => $bookinguser_id, // Isi kolom bookinguser_id di sini
+            ]);
+    
+            // Update bookinguser_id di cart_items
+            CartItem::where('user_id', Auth::id())
+                ->where('product_id', $product->id)
+                ->update([
+                    'bookinguser_id' => $bookinguser_id,
+                ]);
+    
             // Menambahkan flash message ke sesi untuk menandai bahwa booking berhasil
             session()->flash('success', 'Booking berhasil! Anda telah berhasil memesan produk ini.');
         } else {
             // Jika tidak ada booking yang cocok, tambahkan flash message error
             session()->flash('error', 'Booking tidak tersedia untuk produk ini.');
         }
-
+    
         // Hapus item dari keranjang setelah konfirmasi pesanan
         CartItem::where('user_id', Auth::id())
             ->where('product_id', $product->id)
             ->delete();
-
+    
         // Redirect ke dashboard atau halaman lain setelah proses selesai
         return redirect()->route('dashboard');
     }
+    
+    
+    
 
 
     // if ($booking) {
@@ -358,25 +380,33 @@ class BookingController extends Controller
         return redirect()->back()->with('success', 'Produk berhasil dihapus dari keranjang!');
     }
 
-    public function cancelBooking($bookingId, $userId)
+    public function cancelBooking($bookingUserId)
     {
-        // Temukan booking berdasarkan booking ID
-        $booking = Booking::findOrFail($bookingId);
+        // Temukan data booking_user berdasarkan booking user ID
+        $bookingUser = BookingUser::findOrFail($bookingUserId);
+        // dd($bookingUser->id);
 
-        // Temukan data booking_user yang terkait dengan booking ini
-        $bookingUser = $booking->users()->where('user_id', $userId)->first();
+        $history = History::where('bookinguser_id', $bookingUser->id)->first();
+    
+        // Jika Anda ingin mendapatkan booking berdasarkan relasi
+        $booking = $bookingUser->id; // Mengambil booking yang terkait
+    
+        if ($booking) {
+            // Ubah status menjadi 'Dibatalkan' di pivot
+            $bookingUser->status = 'Dibatalkan'; // Ubah status di booking_user
+            $bookingUser->save(); // Simpan perubahan status
 
-        if ($bookingUser) {
-            // Ubah status menjadi 'Dibatalkan' atau hapus data
-            $bookingUser->pivot->status = 'Dibatalkan'; // Ubah status di pivot
-            $bookingUser->pivot->save(); // Simpan perubahan status
-
-            // Atau jika Anda ingin menghapusnya, gunakan:
-            // $bookingUser->pivot->delete();
+            $history->status = 'Dibatalkan'; // Atau status lain yang sesuai
+            $history->save();
+    
+            // Jika Anda ingin juga mengupdate status di tabel booking, lakukan hal ini:
+            // $booking->status = 'Dibatalkan'; // Ubah status di booking
+            // $booking->save();
         }
-
+    
         return redirect()->route('seller-bookings')->with('success', 'Booking berhasil dibatalkan.');
     }
+    
 
 
 

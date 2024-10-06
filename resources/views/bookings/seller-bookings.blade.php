@@ -21,6 +21,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Produk</th>
                 <th>Pembeli</th>
                 <th>Status</th>
@@ -32,6 +33,7 @@
         <tbody>
             @foreach ($bookingUsers as $bookingUser)
                 <tr>
+                    <td>{{$bookingUser->id}}</td>
                     <td>
                         @php
                             // Ambil produk yang terkait dengan booking
@@ -51,11 +53,11 @@
                     <td>{{ \Carbon\Carbon::parse($bookingUser->booking_created_at)->format('d M Y') }}</td>
                     <td>
                         @if ($bookingUser->status !== 'Pesanan Diterima' && $bookingUser->status !== 'Dibatalkan')
-                        <form action="{{ route('confirm.booking', $bookingUser->booking_id) }}" method="POST" class="d-inline">
+                        <form action="{{ route('confirm.booking', $bookingUser->id) }}" method="POST" class="d-inline">
                             @csrf
                             <button type="submit" class="btn btn-success btn-sm">Konfirmasi</button>
                         </form>
-                        <form action="{{ route('cancel.booking', [$bookingUser->booking_id, $bookingUser->user_id]) }}" method="POST" class="d-inline">
+                        <form action="{{ route('cancel.booking', [$bookingUser->id, $bookingUser->user_id]) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm">Batalkan</button>
