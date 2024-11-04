@@ -16,7 +16,7 @@ class Product extends Model
         return $this->belongsTo(User::class, 'seller_id');
     }
 
-    public function bookings()
+    public function pendaftaran()
     {
         return $this->hasMany(Booking::class);
     }

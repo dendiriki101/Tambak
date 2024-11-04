@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Booking extends Model
 {
     use HasFactory;
+    protected $table = 'pendaftaran';
     protected $guarded = ['id']; // Melindungi 'id' dari mass assignment
     protected $dates = ['auction_start', 'auction_end'];
 
@@ -33,7 +34,7 @@ class Booking extends Model
     // Di dalam model Booking
     public function users()
     {
-        return $this->belongsToMany(User::class, 'booking_user')->withTimestamps();
+        return $this->belongsToMany(User::class, 'bookings')->withTimestamps();
     }
 
 

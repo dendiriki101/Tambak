@@ -9,6 +9,6 @@ class Bookinguser extends Model
 {
     use HasFactory;
 
-    protected $table = 'booking_user';
+    protected $table = 'bookings';
     protected $guarded = ['id'];
 }

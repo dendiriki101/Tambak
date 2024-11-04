@@ -14,13 +14,13 @@ class AddBookinguserIdToCartItemsAndHistory extends Migration
         // Menambahkan kolom bookinguser_id ke tabel cart_items
         Schema::table('cart_items', function (Blueprint $table) {
             $table->unsignedBigInteger('bookinguser_id')->nullable()->after('id');
-            $table->foreign('bookinguser_id')->references('id')->on('booking_user')->onDelete('cascade');
+            $table->foreign('bookinguser_id')->references('id')->on('pendaftaran')->onDelete('cascade');
         });
 
         // Menambahkan kolom bookinguser_id ke tabel history
         Schema::table('history', function (Blueprint $table) {
             $table->unsignedBigInteger('bookinguser_id')->nullable()->after('id');
-            $table->foreign('bookinguser_id')->references('id')->on('booking_user')->onDelete('cascade');
+            $table->foreign('bookinguser_id')->references('id')->on('pendaftaran')->onDelete('cascade');
         });
     }
 

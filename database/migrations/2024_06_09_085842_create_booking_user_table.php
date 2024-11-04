@@ -8,13 +8,13 @@ class CreateBookingUserTable extends Migration
 {
     public function up()
     {
-        Schema::create('booking_user', function (Blueprint $table) {
+        Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('booking_id');
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
 
-            $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');
+            $table->foreign('booking_id')->references('id')->on('pendaftaran')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             // Tambahkan kolom tambahan jika diperlukan, misal status booking untuk setiap user
@@ -24,7 +24,7 @@ class CreateBookingUserTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('booking_user');
+        Schema::dropIfExists('bookings');
     }
 }
 

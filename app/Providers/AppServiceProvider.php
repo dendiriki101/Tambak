@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
     });
 
     // Pengecekan untuk membatalkan booking yang masih pending
-     // Pengecekan untuk membatalkan booking yang masih pending selama lebih dari 1 hari di tabel booking_user
+    //  Pengecekan untuk membatalkan booking yang masih pending selama lebih dari 1 hari di tabel booking_user
      BookingUser::where('status', 'Pending') // Filter untuk status 'Pending'
      ->where('created_at', '<=', Carbon::now()->subDay()) // Booking yang dibuat lebih dari 1 hari yang lalu
      ->update(['status' => 'Dibatalkan']); // Update status menjadi 'Dibatalkan'

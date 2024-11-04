@@ -14,7 +14,7 @@ class DashboardController extends Controller
         if (Auth::user()->can('penjual')) {
             // Jika penjual, ambil semua produk mereka
             $products = Product::where('seller_id', Auth::id())->get();
-            
+
             // Kirimkan data produk ke view tanpa jenisIkans dan cities
             return view('dashboard.index', compact('products'));
         } else if (Auth::user()->can('pembeli')) {
@@ -25,7 +25,8 @@ class DashboardController extends Controller
             $priceMax = $request->input('price_max');
             $auctionStart = $request->input('auction_start');
             $auctionEnd = $request->input('auction_end');
-    
+            $jumlah = $request->input('jumlah');
+
             // Ambil data produk sesuai filter
             $products = Product::with(['activeBooking' => function ($query) {
                 // Pastikan booking yang aktif bukan selesai dan jumlah tidak nol
@@ -36,7 +37,7 @@ class DashboardController extends Controller
                   return $query->where('jenis_ikan', $jenisIkan);
               })
               ->when($city, function ($query, $city) {
-                  return $query->whereHas('bookings', function ($q) use ($city) {
+                  return $query->whereHas('pendaftaran', function ($q) use ($city) {
                       $q->where('city', $city);
                   });
               })
@@ -47,27 +48,32 @@ class DashboardController extends Controller
                   return $query->where('price', '<=', $priceMax);
               })
               ->when($auctionStart, function ($query, $auctionStart) {
-                  return $query->whereHas('bookings', function ($q) use ($auctionStart) {
+                  return $query->whereHas('pendaftaran', function ($q) use ($auctionStart) {
                       $q->where('auction_start', '>=', $auctionStart);
                   });
               })
               ->when($auctionEnd, function ($query, $auctionEnd) {
-                  return $query->whereHas('bookings', function ($q) use ($auctionEnd) {
+                  return $query->whereHas('pendaftaran', function ($q) use ($auctionEnd) {
                       $q->where('auction_end', '<=', $auctionEnd);
                   });
               })
+              ->when($jumlah, function ($query, $jumlah) {
+                return $query->whereHas('pendaftaran', function ($q) use ($jumlah) {
+                    $q->where('jumlah', '>', $jumlah);
+                });
+             })
               ->get();
-    
+
             // Ambil daftar jenis ikan dan kota
             $jenisIkans = Product::select('jenis_ikan')->distinct()->get();
             $cities = Booking::select('city')->distinct()->get();
-    
+
             // Kirimkan data produk, jenisIkans, dan cities ke view
             return view('dashboard.index', compact('products', 'jenisIkans', 'cities'));
         }
     }
-    
-    
-    
+
+
+
 }
 

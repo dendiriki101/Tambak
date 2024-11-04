@@ -26,6 +26,7 @@
                 <th>Pembeli</th>
                 <th>Status</th>
                 <th>Status Booking</th>
+                <th>Jumlah</th>
                 <th>Tanggal Booking</th>
                 <th>Aksi</th>
             </tr>
@@ -50,6 +51,7 @@
                     </td>
                     <td>{{ $bookingUser->status }}</td>
                     <td>{{ $bookingUser->booking_status }}</td>
+                    <td>{{ $bookingUser->booking_jumlah }}</td>
                     <td>{{ \Carbon\Carbon::parse($bookingUser->booking_created_at)->format('d M Y') }}</td>
                     <td>
                         @if ($bookingUser->status !== 'Pesanan Diterima' && $bookingUser->status !== 'Dibatalkan')

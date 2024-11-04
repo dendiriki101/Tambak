@@ -8,7 +8,7 @@ class AddAuctionDatesToBookingsTable extends Migration
 {
     public function up()
     {
-        Schema::table('bookings', function (Blueprint $table) {
+        Schema::table('pendaftaran', function (Blueprint $table) {
             $table->date('auction_start')->nullable();
             $table->date('auction_end')->nullable();
         });
@@ -16,7 +16,7 @@ class AddAuctionDatesToBookingsTable extends Migration
 
     public function down()
     {
-        Schema::table('bookings', function (Blueprint $table) {
+        Schema::table('pendaftaran', function (Blueprint $table) {
             $table->dropColumn(['auction_start', 'auction_end']);
         });
     }

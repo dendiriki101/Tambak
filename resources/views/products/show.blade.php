@@ -72,7 +72,7 @@
         <!-- Bagian detail produk -->
         <div class="col-md-6">
             <div class="product-details bg-light p-4 shadow-sm rounded">
-                <h1 class="display-5">{{ $product->name }}</h1>
+                <h1 class="display-5 fw-bold">{{ $product->name }}</h1>
                 <p class="text-muted">{{ $product->description }}</p>
                 <div class="product-location my-3">
                     <i class="bi bi-geo-alt-fill"></i>

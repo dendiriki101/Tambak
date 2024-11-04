@@ -13,7 +13,7 @@ class AddJumlahToBookingsTable extends Migration
      */
     public function up()
     {
-        Schema::table('bookings', function (Blueprint $table) {
+        Schema::table('pendaftaran', function (Blueprint $table) {
             $table->integer('jumlah')->default(0); // Menambahkan kolom 'jumlah' dengan default nilai 0
         });
     }
@@ -25,7 +25,7 @@ class AddJumlahToBookingsTable extends Migration
      */
     public function down()
     {
-        Schema::table('bookings', function (Blueprint $table) {
+        Schema::table('pendaftaran', function (Blueprint $table) {
             $table->dropColumn('jumlah'); // Menghapus kolom 'jumlah' jika rollback migration
         });
     }

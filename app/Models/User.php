@@ -44,7 +44,7 @@ class User extends Authenticatable
     // Di dalam model User
     public function bookings()
     {
-        return $this->belongsToMany(Booking::class, 'booking_user')
+        return $this->belongsToMany(Booking::class, 'bookings')
                     ->withPivot('status', 'id') // Sertakan 'id' di sini
                     ->withTimestamps();
     }
